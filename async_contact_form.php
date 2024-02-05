@@ -1,6 +1,6 @@
 <?php
 
-// first step is to run:    composer require asyncaws
+// before use install asyncAWS: composer require asyncaws
 require 'vendor/autoload.php';
 
 use AsyncAws\Ses\SesClient;
@@ -10,6 +10,21 @@ use AsyncAws\Ses\ValueObject\Content;
 use AsyncAws\Ses\ValueObject\Destination;
 use AsyncAws\Ses\ValueObject\EmailContent;
 use AsyncAws\Ses\ValueObject\Message;
+
+
+header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']??'*',true);
+header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS',true);
+header('Access-Control-Allow-Headers: Content-Type, Authorization, Set-Cookie',true);
+header('Access-Control-Allow-Credentials: true',true);
+header('Vary: Origin',true);
+
+
+if( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' )
+{
+    header('HTTP/1.1 204 No Content');
+    exit;
+}
+
 
 // ensure the identities are correctly set in AWS SES
 $to_address = 'someone@somehwere.com';
@@ -30,19 +45,6 @@ $SUBJECTS = [SUBJECT_QUESTION=>"I have a general question",
              SUBJECT_JPRODUCT=>"I have a question about a product",
              SUBJECT_BILLING=>"I have a billing question",
              SUBJECT_OTHER=>"Other"];
-
-
-
-if( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' )
-{
-    header('HTTP/1.1 204 No Content');
-    header('Access-Control-Allow-Origin',$_SERVER['HTTP_ORIGIN']??'*');
-    header('Access-Control-Allow-Methods','GET, PUT, POST, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers','Content-Type, Authorization, Set-Cookie');
-    header('Access-Control-Allow-Credentials','true');
-    header('Vary','Origin');
-    exit;
-}
 
 $request = json_decode(file_get_contents('php://input'));
 
